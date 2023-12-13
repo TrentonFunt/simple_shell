@@ -20,7 +20,6 @@ char *readUserInput(void)
 		/* Checks if end of file i.e (Ctrl+D) was reached */
 		if (feof(stdin))
 		{
-			printf("\n"); /* Prints a new line and exits successfully */
 			exit(EXIT_SUCCESS);
 		}
 		/* Prints an error and exits with failure if getline fails */

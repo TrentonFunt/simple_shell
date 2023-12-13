@@ -8,6 +8,7 @@
 char *extractCommand(char *inputLine)
 {
 	char *str_token;
+	size_t len, i;
 	char *cmd_str = NULL;
 
   /* Tokenizes the input line using space, tab, and newline as delimiters */
@@ -15,22 +16,28 @@ char *extractCommand(char *inputLine)
 	/* Checks if the token exists and if there is no additional token */
 	if (str_token != NULL && strtok(NULL, " \t\n") == NULL)
 	{
-		/**
-		 * Allocates the memory for the command string
-		 * @strdup: then copies the token
-		 */
-		cmd_str = strdup(str_token);
-		/* Checks for memory allocation failure */
+		len = 0;
+		while (str_token[len] != '\0')
+		{
+			len++;
+		}
+
+		cmd_str = (char *)malloc(len + 1);
 		if (cmd_str == NULL)
 		{
 			perror("Error allocating memory");
 			exit(EXIT_FAILURE);
 		}
+
+		for (i = 0; i <= len; i++)
+		{
+			cmd_str[i] = str_token[i];
+		}
 	}
 	/* Displays an error message if multiple tokens exist */
 	else if (str_token != NULL)
 	{
-		printf("Error: The command must be a single word\n");
+		printf("Error: wrong command format\n");
 	}
 
 	return (cmd_str);

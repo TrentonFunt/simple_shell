@@ -8,12 +8,26 @@
 int exit_Shell(char *command)
 {
 	char *args[10];
+	int isExit, i;
 
 	args[0] = strtok(command, " ");
 	/* Checks if the command is the built-in "exit" command using strcmp */
-	if (strcmp(args[0], "exit") == 0)
-		return (1);
-
+	if (args[0] != NULL)
+	{
+		isExit = 1;
+		for (i = 0; i < 4; i++)
+		{
+			if (args[0][i] != "exit"[i])
+			{
+				isExit = 0;
+				break;
+			}
+		}
+		if (isExit)
+		{
+			exit(EXIT_SUCCESS);
+		}
+	}
 	return (0);
 }
 

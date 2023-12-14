@@ -10,7 +10,7 @@ void displayPrompt(void)
 	 */
 	if (isatty(STDIN_FILENO))
 	{
-		printf("( ͡° ͜ʖ ͡°) "); /* Prints the shell prompt */
+		printf("$ "); /* Prints the shell prompt */
 		fflush(stdout);	/* Flushes the stdout buffer */
 	}
 }

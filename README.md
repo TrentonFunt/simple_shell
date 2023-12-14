@@ -21,19 +21,19 @@ To compile and run the simple shell on your system, follow these steps:
 
     ```bash
     git clone <repository_url>
-    cd simple-shell
+    cd simple_shell
     ```
 
 2. Compile the code:
 
     ```bash
-    gcc -o shell *.c
+    gcc -o hsh *.c
     ```
 
 3. Run the shell:
 
     ```bash
-    ./shell
+    ./hsh
     ```
 
 ## Features
@@ -48,7 +48,7 @@ To compile and run the simple shell on your system, follow these steps:
 ## Usage
 
 ```bash
-./shell
+./hsh
 ```
 
 Once the shell is running, you can enter single-word commands at the prompt. The shell will execute the command and display the prompt again.

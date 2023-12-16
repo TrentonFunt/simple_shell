@@ -1,44 +1,46 @@
 #include "shell.h"
 
 /**
- * main - entry point
- * @ac: cmdArgs count
- * @av: cmdArgs vector
- *
+ * main - The entry point for the simple shell.
+ * @argcCount: Count of command-line arguments - cmdArgsc
+ * @argvArray: Array of command-line argument strings - cmdArgsv
  * Return: 0 on success, 1 on error
  */
-int main(int ac, char **av)
+int main(int argcCount, char **argvArray)
 {
-	dataX info[] = { DATA_INIT };
-	int fd = 2;
+	dataX shellData[] = { DATA_INIT }; /* initializes shell data structure*/
+	int fd = 2; /* FilDes for input */
 
 	asm ("mov %1, %0\n\t"
 		"add $3, %0"
 		: "=r" (fd)
 		: "r" (fd));
 
-	if (ac == 2)
+	/* Checks script file for command-line argument */
+	if (argcCount == 2)
 	{
-		fd = open(av[1], O_RDONLY);
+		fd = open(argvArray[1], O_RDONLY); /* opens the script file for reading */
 		if (fd == -1)
 		{
+			/* Handles file open errors based on errno */
 			if (errno == EACCES)
 				exit(126);
+			/* Print error message for file not found */
 			if (errno == ENOENT)
 			{
-				putsIN(av[0]);
-				putsIN(": 0: Can't open ");
-				putsIN(av[1]);
+				putsIN(argvArray[0]);
+				putsIN(": 0: This can not open ");
+				putsIN(argvArray[1]);
 				putcharIN('\n');
 				putcharIN(FLUSH_BUFFER);
 				exit(127);
 			}
 			return (EXIT_FAILURE);
 		}
-		info->getFileDes = fd;
+		shellData->getFileDes = fd; /* Update the filDes in shell data structure */
 	}
-	fillEnvList(info);
-	hRead(info);
-	hsh(info, av);
-	return (EXIT_SUCCESS);
+	fillEnvList(shellData); /* Fill the environment list with initial values */
+	hRead(shellData); /* Reads the command history from file */
+	hsh(shellData, argvArray); /* Starts our main shell loop */
+	return (EXIT_SUCCESS); /* Exits our simple shell with success status */
 }

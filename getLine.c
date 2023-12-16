@@ -13,7 +13,7 @@ ssize_t input_buf(dataX *shellData, char **buf, size_t *len)
 	ssize_t r = 0;
 	size_t len_p = 0;
 
-	if (!*len) /* if nothing left in the buffer, fill it */
+	if (!*len) /*  fill buffer if empty */
 	{
 		/*getFree((void **)shellData->cmdBuffer);*/
 		free(*buf);
@@ -28,7 +28,7 @@ ssize_t input_buf(dataX *shellData, char **buf, size_t *len)
 		{
 			if ((*buf)[r - 1] == '\n')
 			{
-				(*buf)[r - 1] = '\0'; /* remove trailing newline */
+				(*buf)[r - 1] = '\0'; /*  trailing newline removed */
 				r--;
 			}
 			shellData->cmdCounterFlag = 1;
@@ -61,7 +61,7 @@ ssize_t takeInput(dataX *shellData)
 	r = input_buf(shellData, &buf, &len);
 	if (r == -1) /* EOF */
 		return (-1);
-	if (len)	/* we have commands left in the chain buffer */
+	if (len)
 	{
 		j = i; /* init new iterator to current buf position */
 		p = buf + i; /* get pointer for return */
@@ -81,12 +81,12 @@ ssize_t takeInput(dataX *shellData)
 			shellData->cmdBufferType = NORMAL_COMMAND;
 		}
 
-		*buf_p = p; /* pass back pointer to current command position */
-		return (_strlen(p)); /* return length of current command */
+		*buf_p = p;
+		return (_strlen(p)); /* length of command */
 	}
 
-	*buf_p = buf; /* else not a chain, pass back buffer from _getLine() */
-	return (r); /* return length of buffer from _getLine() */
+	*buf_p = buf; /* if not a chain, pass from _getLine() */
+	return (r); /* rlength of buffer */
 }
 
 /**
@@ -99,7 +99,7 @@ ssize_t takeInput(dataX *shellData)
  */
 ssize_t read_buf(dataX *shellData, char *buf, size_t *i)
 {
-	ssize_t r = 0;
+	ssize_t q = 0;
 
 	if (*i)
 		return (0);
@@ -115,43 +115,55 @@ ssize_t read_buf(dataX *shellData, char *buf, size_t *i)
  * @ptr: address of pointer to buffer, preallocated or NULL
  * @length: size of preallocated ptr buffer if not NULL
  *
- * Return: s
+ * Return: The number of characters read, or -1 on failure.
  */
 int _getLine(dataX *shellData, char **ptr, size_t *length)
 {
+	/* Static buffer for reading input */
 	static char buf[INPUT_BUFFER_SIZE];
-	static size_t i, len;
-	size_t k;
+	static size_t i = 0, len = 0;
 	ssize_t r = 0, s = 0;
-	char *p = NULL, *new_p = NULL, *c;
+	ssize_t k;
+	char *p = *ptr, *new_p = NULL, *c;
 
-	p = *ptr;
+	/* Check if a preallocated buffer and its size are provided */
 	if (p && length)
 		s = *length;
-	if (i == len)
+
+	/* Reset indices if the current buffer is fully consumed */
+	if (i == len) {
 		i = len = 0;
 
 	r = read_buf(shellData, buf, &len);
 	if (r == -1 || (r == 0 && len == 0))
 		return (-1);
 
+	/* Find the position of the newline character in the buffer */
 	c = _strchr(buf + i, '\n');
 	k = c ? 1 + (unsigned int)(c - buf) : len;
+	/* Allocate memory for the new buffer based on the length */
 	new_p = _realloc(p, s, s ? s + k : k + 1);
-	if (!new_p) /* MALLOC FAILURE! */
+
+	/* Check for memory allocation failure */
+	if (!new_p)
 		return (p ? free(p), -1 : -1);
 
+	/* Copy the contents of the buffer to the new buffer */
 	if (s)
 		_strncat(new_p, buf + i, k - i);
 	else
 		_strncpy(new_p, buf + i, k - i + 1);
 
+	/* Update indices and pointers */
 	s += k - i;
 	i = k;
 	p = new_p;
 
+	/* Update the provided length if applicable */
 	if (length)
 		*length = s;
+
+	/* Update the pointer to the buffer */
 	*ptr = p;
 	return (s);
 }

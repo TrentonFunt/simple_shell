@@ -17,7 +17,7 @@ int envDone(dataX *shellData)
  * @shellData: Structure containing potential arguments. Used to maintain
  * @name: env var name
  *
- * Return: the value
+ * Return: value
  */
 char *defEnv(dataX *shellData, const char *name)
 {
@@ -45,7 +45,7 @@ int setEnvDone(dataX *shellData)
 {
 	if (shellData->cmdArgc != 3)
 	{
-		putsIN("Incorrect number of arguements\n");
+		putsIN("Number of arguments incorrect\n");
 		return (1);
 	}
 	if (envSet(shellData, shellData->cmdArgv[1], shellData->cmdArgv[2]))
@@ -65,7 +65,7 @@ int unsetEnvDone(dataX *shellData)
 
 	if (shellData->cmdArgc == 1)
 	{
-		putsIN("Too few arguements.\n");
+		putsIN("Arguments not enough.\n");
 		return (1);
 	}
 	for (i = 1; i <= shellData->cmdArgc; i++)

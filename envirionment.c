@@ -2,7 +2,7 @@
 
 /**
  * envDone - prints the current environment
- * @info: Structure containing potential arguments. Used to maintain
+ * @info: Structure with potential arguments. Used to maintain
  *          constant function prototype.
  * Return: Always 0
  */
@@ -15,9 +15,9 @@ int envDone(dataX *info)
 /**
  * defEnv - gets the value of an environ variable
  * @info: Structure containing potential arguments. Used to maintain
- * @name: env var name
+ * @name: env variable name
  *
- * Return: the value
+ * Return: value
  */
 char *defEnv(dataX *info, const char *name)
 {
@@ -45,7 +45,7 @@ int setEnvDone(dataX *info)
 {
 	if (info->cmdArgc != 3)
 	{
-		putsIN("Incorrect number of arguements\n");
+		putsIN("Number of arguments incorrect\n");
 		return (1);
 	}
 	if (envSet(info, info->cmdArgv[1], info->cmdArgv[2]))
@@ -65,7 +65,7 @@ int unsetEnvDone(dataX *info)
 
 	if (info->cmdArgc == 1)
 	{
-		putsIN("Too few arguements.\n");
+		putsIN("Arguments not enough.\n");
 		return (1);
 	}
 	for (i = 1; i <= info->cmdArgc; i++)

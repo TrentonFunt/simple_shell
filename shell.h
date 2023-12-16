@@ -255,7 +255,7 @@ size_t listPrint(const list_t *);
 list_t *beginNode(list_t *, char *, char);
 ssize_t nodeIndex(list_t *, list_t *);
 
-/* Function prototype(s) for vars.c */
+/* Function prototype(s) for shellVariable.c */
 int chainDelim(dataX *, char *, size_t *);
 void chainChecks(dataX *, char *, size_t *, size_t, size_t);
 int aliasChange(dataX *);

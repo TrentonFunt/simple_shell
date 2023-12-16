@@ -34,7 +34,7 @@ int checkDelim(char c, char *delim)
  *@c: The character to input
  *Return: 1 if c is alphabetic, 0 otherwise
  */
-int checkAlpha(int c)
+int checkAlpha(int q)
 {
 	if ((q >= 'a' && q <= 'z') || (q >= 'A' && q <= 'Z'))
 		return (1);

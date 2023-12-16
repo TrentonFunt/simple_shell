@@ -99,7 +99,7 @@ ssize_t takeInput(dataX *shellData)
  */
 ssize_t read_buf(dataX *shellData, char *buf, size_t *i)
 {
-	ssize_t q = 0;
+	ssize_t r = 0;
 
 	if (*i)
 		return (0);
@@ -133,7 +133,7 @@ int _getLine(dataX *shellData, char **ptr, size_t *length)
 	/* Reset indices if the current buffer is fully consumed */
 	if (i == len) {
 		i = len = 0;
-
+	}
 	r = read_buf(shellData, buf, &len);
 	if (r == -1 || (r == 0 && len == 0))
 		return (-1);
@@ -171,7 +171,6 @@ int _getLine(dataX *shellData, char **ptr, size_t *length)
 /**
  * intHandle - blocks ctrl-C
  * @sig_num: the signal number
- *
  * Return: void
  */
 void intHandle(__attribute__((unused))int sig_num)

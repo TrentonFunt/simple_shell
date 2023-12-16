@@ -1,7 +1,7 @@
 #include "shell.h"
 
 /**
- * iMode - returns true if shell is iMode mode
+ * iMode - Will retun true if shell is iMode mode
  * @info: struct address
  *
  * Return: 1 if iMode mode, 0 otherwise

@@ -110,24 +110,24 @@ typedef struct userInfo
 /* Initializer for the userInfo struct */
 #define DATA_INIT \
 { \
-    NULL,          /* cmdArgs */ \
-    NULL,          /* cmdArgv */ \
-    0,             /* cmdArgc */ \
-    NULL,          /* cmdBuffer */ \
-    0,             /* cmdBufferType */ \
-    0,             /* cmdCounterFlag */ \
-    0,             /* cmdCounter */ \
-    NULL,          /* filePath */ \
-    0,             /* errValue */ \
-    NULL,          /* fileName */ \
-    NULL,          /* env */ \
-    NULL,          /* shellHistory */ \
-    NULL,          /* alias */ \
-    NULL,          /* environ */ \
-    0,             /* diffEnv */ \
-    0,             /* shellState */ \
-    0,             /* getFileDes */ \
-    0              /* historyVal */ \
+NULL,          /* cmdArgs */ \
+NULL,          /* cmdArgv */ \
+0,             /* cmdArgc */ \
+NULL,          /* cmdBuffer */ \
+0,             /* cmdBufferType */ \
+0,             /* cmdCounterFlag */ \
+0,             /* cmdCounter */ \
+NULL,          /* filePath */ \
+0,             /* errValue */ \
+NULL,          /* fileName */ \
+NULL,          /* env */ \
+NULL,          /* shellHistory */ \
+NULL,          /* alias */ \
+NULL,          /* environ */ \
+0,             /* diffEnv */ \
+0,             /* shellState */ \
+0,             /* getFileDes */ \
+0              /* historyVal */ \
 }
 
 /**

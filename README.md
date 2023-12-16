@@ -1,111 +1,92 @@
-# Simple Shell
+# Simple Shell Project
 
-This is a simple UNIX command line interpreter (shell) written in C. The shell allows users to execute basic commands and displays a prompt for user input. It supports the execution of single-word commands and provides a basic error handling mechanism.
+This repository contains a simple shell implementation in C, which provides a basic command-line interface for users to interact with the system. The main functionalities include command execution, environment variable management, history tracking, and basic error handling.
 
 ## Table of Contents
-
-- [Getting Started](#getting-started)
+- [Introduction](#introduction)
 - [Features](#features)
+- [File Structure](#file-structure)
 - [Usage](#usage)
-- [Code Structure](#code-structure)
-- [Functionality](#functionality)
-- [Known Issues](#known-issues)
+- [Functionality Overview](#functionality-overview)
+- [Building the Shell](#building-the-shell)
 - [Contributing](#contributing)
 - [License](#license)
 
-## Getting Started
+## Introduction
 
-To compile and run the simple shell on your system, follow these steps:
-
-1. Clone the repository:
-
-    ```bash
-    git clone <repository_url>
-    cd simple_shell
-    ```
-
-2. Compile the code:
-
-    ```bash
-    gcc -o hsh *.c
-    ```
-
-3. Run the shell:
-
-    ```bash
-    ./hsh
-    ```
+This simple shell project is designed to mimic the basic functionalities of a Unix-like shell. It supports command execution, environment variables, history tracking, and more. The project is written in C and uses standard C libraries for various functionalities.
 
 ## Features
 
-- Display a prompt and wait for the user to type a command.
-- Execute single-word commands.
-- Provide basic error handling for command execution.
-- Handle the "end of file" condition (Ctrl+D).
-- Display appropriate error messages for command not found.
-- Gracefully handle fork failures and execution errors.
+- Command execution with basic command chaining
+- Environment variable management
+- History tracking of executed commands
+- Built-in commands such as `exit`, `cd`, `help`, and more
+- Alias support for custom commands
+- File input redirection
+- Basic error handling and reporting
+
+## File Structure
+
+- **shell.h**: Header file containing function prototypes, macro definitions, and structure declarations.
+- **main.c**: Main entry point of the shell, initializes necessary data structures, and starts the shell's main loop.
+- **handleStrings1.c, handleStrings2.c**: Functions for string manipulation.
+- **leaveShell.c**: Functions related to exiting the shell.
+- **generateTokens.c**: Functions for tokenizing input commands.
+- **realloc.c**: Functions for memory reallocation.
+- **memory.c**: Functions for memory management.
+- **convert.c**: Functions for converting between data types.
+- **loop.c**: Functions for the main shell loop.
+- **parsed.c**: Functions for parsing and executing commands.
+- **loophsh.c**: Functions for handling the shell loop.
+- **handleErrors.c, shellErrors2.c**: Functions for error handling and reporting.
+- **shellBuiltins1.c, shellBuiltins2.c**: Functions for built-in shell commands.
+- **getLine.c**: Functions for reading input from the command line.
+- **getinfo.c**: Functions for handling shell information.
+- **environment.c, setEnvironment.c**: Functions for managing environment variables.
+- **history.c**: Functions for managing command history.
+- **linkedLists1.c, linkedLists2.c**: Functions for handling linked lists.
+- **shellVariables.c**: Functions for managing shell variables.
 
 ## Usage
 
-```bash
-./hsh
-```
-
-Once the shell is running, you can enter single-word commands at the prompt. The shell will execute the command and display the prompt again.
+To use the simple shell, compile the source files and run the executable. The shell supports both interactive mode and script execution. For script execution, provide the script file as a command-line argument.
 
 ```bash
-#cisfun$ ls
-#cisfun$ /bin/ls
-#cisfun$ /bin/ls -l
-#cisfun$ exit
+gcc main.c -o simple_shell
+./simple_shell
 ```
 
-## Code Structure
+## Functionality Overview
 
-The code is organized into several source files for better modularity:
+- **Command Execution**: The shell can execute various commands entered by the user, either interactively or from a script file.
 
-- **simple_shell.c**: The main entry point for the shell program.
-- **execute.c**: Contains functions related to command execution and process creation.
-- **parsed_line.c**: Handles parsing and extraction of commands from user input.
-- **get_input.c**: Manages user input, reading from the command line.
-- **prompt_usr.c**: Displays the shell prompt.
+- **Environment Variables**: The shell supports basic environment variable management, including setting, unsetting, and displaying environment variables.
 
-## Functionality
+- **History Tracking**: The shell keeps track of the command history, allowing users to navigate and re-execute previous commands.
 
-### `displayPrompt()`
+- **Built-in Commands**: Several built-in commands, such as `exit`, `cd`, `help`, `history`, and `alias`, are available for enhanced user interaction.
 
-Displays the shell prompt "( ͡° ͜ʖ ͡°)" if the file descriptor refers to a terminal.
+- **File Input Redirection**: The shell supports file input redirection for executing commands with input from a file.
 
-### `readUserInput()`
+- **Error Handling**: Basic error handling is implemented to provide informative error messages when issues arise during command execution.
 
-Reads a line of input from the user, handling errors and checking for the end of file condition (Ctrl+D).
+## Building the Shell
 
-### `extractCommand(char *inputLine)`
+To build the simple shell, use the provided `gcc` command:
 
-Extracts a single-word command from the input line. Handles errors if the command is not a single word.
+```bash
+gcc main.c -o simple_shell
+```
 
-### `exit_Shell(char *command)`
-
-Checks if the given command is the "exit" command. If true, exits the shell.
-
-### `create_CP(char *args[])`
-
-Forks and executes the given command in a child process. Waits for the child process to complete execution.
-
-### `executeCommand(char *command)`
-
-Executes the given command by parsing it and creating a child process using `create_CP()`.
-
-## Known Issues
-
-- The shell currently does not handle special characters, command arguments, or advanced features.
-- No support for the PATH environment variable, built-ins, or special characters.
-- Limited error handling for invalid user input.
+This will generate an executable file named `simple_shell`. Run the executable to start the shell.
 
 ## Contributing
 
-Contributions are welcome! Feel free to open issues or submit pull requests to improve the functionality, address known issues, or add new features.
+Contributions to this simple shell project are welcome. If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
 
 ## License
 
-This simple shell is open-source and distributed under the [MIT License](LICENSE). Feel free to use, modify, and distribute the code. See the LICENSE file for details.
+This simple shell project is licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute the code for your purposes.
+
+**Happy coding!**

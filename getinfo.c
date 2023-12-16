@@ -2,73 +2,73 @@
 
 /**
  * clrData - initializes dataX struct
- * @info: struct address
+ * @shellData: struct address
  */
-void clrData(dataX *info)
+void clrData(dataX *shellData)
 {
-	info->cmdArgs = NULL;
-	info->cmdArgv = NULL;
-	info->filePath = NULL;
-	info->cmdArgc = 0;
+	shellData->cmdArgs = NULL;
+	shellData->cmdArgv = NULL;
+	shellData->filePath = NULL;
+	shellData->cmdArgc = 0;
 }
 
 /**
  * defData - initializes dataX struct
- * @info: struct address
+ * @shellData: struct address
  * @av: argument vector
  */
-void defData(dataX *info, char **av)
+void defData(dataX *shellData, char **av)
 {
 	int i = 0;
 
-	info->fileName = av[0];
-	if (info->cmdArgs)
+	shellData->fileName = av[0];
+	if (shellData->cmdArgs)
 	{
-		info->cmdArgv = strtow(info->cmdArgs, " \t");
-		if (!info->cmdArgv)
+		shellData->cmdArgv = strtow(shellData->cmdArgs, " \t");
+		if (!shellData->cmdArgv)
 		{
 
-			info->cmdArgv = malloc(sizeof(char *) * 2);
-			if (info->cmdArgv)
+			shellData->cmdArgv = malloc(sizeof(char *) * 2);
+			if (shellData->cmdArgv)
 			{
-				info->cmdArgv[0] = _strdup(info->cmdArgs);
-				info->cmdArgv[1] = NULL;
+				shellData->cmdArgv[0] = _strdup(shellData->cmdArgs);
+				shellData->cmdArgv[1] = NULL;
 			}
 		}
-		for (i = 0; info->cmdArgv && info->cmdArgv[i]; i++)
+		for (i = 0; shellData->cmdArgv && shellData->cmdArgv[i]; i++)
 			;
-		info->cmdArgc = i;
+		shellData->cmdArgc = i;
 
-		aliasChange(info);
-		variableChange(info);
+		aliasChange(shellData);
+		variableChange(shellData);
 	}
 }
 
 /**
  * freeData - frees dataX struct fields
- * @info: struct address
+ * @shellData: struct address
  * @all: true if freeing all fields
  */
-void freeData(dataX *info, int all)
+void freeData(dataX *shellData, int all)
 {
-	ffree(info->cmdArgv);
-	info->cmdArgv = NULL;
-	info->filePath = NULL;
+	ffree(shellData->cmdArgv);
+	shellData->cmdArgv = NULL;
+	shellData->filePath = NULL;
 	if (all)
 	{
-		if (!info->cmdBuffer)
-			free(info->cmdArgs);
-		if (info->env)
-			noList(&(info->env));
-		if (info->shellHistory)
-			noList(&(info->shellHistory));
-		if (info->alias)
-			noList(&(info->alias));
-		ffree(info->environ);
-			info->environ = NULL;
-		getFree((void **)info->cmdBuffer);
-		if (info->getFileDes > 2)
-			close(info->getFileDes);
+		if (!shellData->cmdBuffer)
+			free(shellData->cmdArgs);
+		if (shellData->env)
+			noList(&(shellData->env));
+		if (shellData->shellHistory)
+			noList(&(shellData->shellHistory));
+		if (shellData->alias)
+			noList(&(shellData->alias));
+		ffree(shellData->environ);
+			shellData->environ = NULL;
+		getFree((void **)shellData->cmdBuffer);
+		if (shellData->getFileDes > 2)
+			close(shellData->getFileDes);
 		_putchar(FLUSH_BUFFER);
 	}
 }

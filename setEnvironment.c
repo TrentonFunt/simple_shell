@@ -2,31 +2,31 @@
 
 /**
  * envGet - returns the string array copy of our environ
- * @info: Structure containing potential arguments. Used to maintain
+ * @shellData: Structure containing potential arguments. Used to maintain
  *          constant function prototype.
  * Return: Always 0
  */
-char **envGet(dataX *info)
+char **envGet(dataX *shellData)
 {
-	if (!info->environ || info->diffEnv)
+	if (!shellData->environ || shellData->diffEnv)
 	{
-		info->environ = lengthS(info->env);
-		info->diffEnv = 0;
+		shellData->environ = lengthS(shellData->env);
+		shellData->diffEnv = 0;
 	}
 
-	return (info->environ);
+	return (shellData->environ);
 }
 
 /**
  * envUnset - Remove an environment variable
- * @info: Structure containing potential arguments. Used to maintain
+ * @shellData: Structure containing potential arguments. Used to maintain
  *        constant function prototype.
  *  Return: 1 on delete, 0 otherwise
  * @var: the string env var property
  */
-int envUnset(dataX *info, char *var)
+int envUnset(dataX *shellData, char *var)
 {
-	list_t *node = info->env;
+	list_t *node = shellData->env;
 	size_t i = 0;
 	char *p;
 
@@ -38,27 +38,27 @@ int envUnset(dataX *info, char *var)
 		p = beginT(node->str, var);
 		if (p && *p == '=')
 		{
-			info->diffEnv = delNode(&(info->env), i);
+			shellData->diffEnv = delNode(&(shellData->env), i);
 			i = 0;
-			node = info->env;
+			node = shellData->env;
 			continue;
 		}
 		node = node->next;
 		i++;
 	}
-	return (info->diffEnv);
+	return (shellData->diffEnv);
 }
 
 /**
  * envSet - Initialize a new environment variable,
  *             or modify an existing one
- * @info: Structure containing potential arguments. Used to maintain
+ * @shellData: Structure containing potential arguments. Used to maintain
  *        constant function prototype.
  * @var: the string env var property
  * @value: the string env var value
  *  Return: Always 0
  */
-int envSet(dataX *info, char *var, char *value)
+int envSet(dataX *shellData, char *var, char *value)
 {
 	char *buf = NULL;
 	list_t *node;
@@ -73,7 +73,7 @@ int envSet(dataX *info, char *var, char *value)
 	_strcpy(buf, var);
 	_strcat(buf, "=");
 	_strcat(buf, value);
-	node = info->env;
+	node = shellData->env;
 	while (node)
 	{
 		p = beginT(node->str, var);
@@ -81,13 +81,13 @@ int envSet(dataX *info, char *var, char *value)
 		{
 			free(node->str);
 			node->str = buf;
-			info->diffEnv = 1;
+			shellData->diffEnv = 1;
 			return (0);
 		}
 		node = node->next;
 	}
-	newNode(&(info->env), buf, 0);
+	newNode(&(shellData->env), buf, 0);
 	free(buf);
-	info->diffEnv = 1;
+	shellData->diffEnv = 1;
 	return (0);
 }

@@ -2,13 +2,13 @@
 
 /**
  * iMode - returns true if shell is iMode mode
- * @info: struct address
+ * @shellData: struct address
  *
  * Return: 1 if iMode mode, 0 otherwise
  */
-int iMode(dataX *info)
+int iMode(dataX *shellData)
 {
-	return (isatty(STDIN_FILENO) && info->getFileDes <= 2);
+	return (isatty(STDIN_FILENO) && shellData->getFileDes <= 2);
 }
 
 /**
@@ -20,8 +20,12 @@ int iMode(dataX *info)
 int checkDelim(char c, char *delim)
 {
 	while (*delim)
+	{
 		if (*delim++ == c)
+		{
 			return (1);
+		}
+	}
 	return (0);
 }
 
@@ -30,7 +34,6 @@ int checkDelim(char c, char *delim)
  *@c: The character to input
  *Return: 1 if c is alphabetic, 0 otherwise
  */
-
 int checkAlpha(int c)
 {
 	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
@@ -44,7 +47,6 @@ int checkAlpha(int c)
  *@s: the string to be converted
  *Return: 0 if no numbers in string, converted number otherwise
  */
-
 int convert(char *s)
 {
 	int i, sign = 1, flag = 0, output;

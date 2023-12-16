@@ -2,16 +2,16 @@
 
 /**
  * getFileHistory - gets the shellHistory file
- * @info: parameter struct
+ * @shellData: parameter struct
  *
  * Return: allocated string containg shellHistory file
  */
 
-char *getFileHistory(dataX *info)
+char *getFileHistory(dataX *shellData)
 {
 	char *buf, *dir;
 
-	dir = defEnv(info, "HOME=");
+	dir = defEnv(shellData, "HOME=");
 	if (!dir)
 		return (NULL);
 	buf = malloc(sizeof(char) * (_strlen(dir) + _strlen(FILE_HISTORY) + 2));
@@ -26,14 +26,14 @@ char *getFileHistory(dataX *info)
 
 /**
  * historyWrite - creates a file, or appends to an existing file
- * @info: the parameter struct
+ * @shellData: the parameter struct
  *
  * Return: 1 on success, else -1
  */
-int historyWrite(dataX *info)
+int historyWrite(dataX *shellData)
 {
 	ssize_t fd;
-	char *filename = getFileHistory(info);
+	char *filename = getFileHistory(shellData);
 	list_t *node = NULL;
 
 	if (!filename)
@@ -43,7 +43,7 @@ int historyWrite(dataX *info)
 	free(filename);
 	if (fd == -1)
 		return (-1);
-	for (node = info->shellHistory; node; node = node->next)
+	for (node = shellData->shellHistory; node; node = node->next)
 	{
 		_putsFileDes(node->str, fd);
 		_putFileDes('\n', fd);
@@ -55,16 +55,16 @@ int historyWrite(dataX *info)
 
 /**
  * hRead - reads shellHistory from file
- * @info: the parameter struct
+ * @shellData: the parameter struct
  *
  * Return: historyVal on success, 0 otherwise
  */
-int hRead(dataX *info)
+int hRead(dataX *shellData)
 {
 	int i, last = 0, linecount = 0;
 	ssize_t fd, rdlen, fsize = 0;
 	struct stat st;
-	char *buf = NULL, *filename = getFileHistory(info);
+	char *buf = NULL, *filename = getFileHistory(shellData);
 
 	if (!filename)
 		return (0);
@@ -89,49 +89,49 @@ int hRead(dataX *info)
 		if (buf[i] == '\n')
 		{
 			buf[i] = 0;
-			hBuild(info, buf + last, linecount++);
+			hBuild(shellData, buf + last, linecount++);
 			last = i + 1;
 		}
 	if (last != i)
-		hBuild(info, buf + last, linecount++);
+		hBuild(shellData, buf + last, linecount++);
 	free(buf);
-	info->historyVal = linecount;
-	while (info->historyVal-- >= MAX_ENTRIES_HISTORY)
-		delNode(&(info->shellHistory), 0);
-	hNum(info);
-	return (info->historyVal);
+	shellData->historyVal = linecount;
+	while (shellData->historyVal-- >= MAX_ENTRIES_HISTORY)
+		delNode(&(shellData->shellHistory), 0);
+	hNum(shellData);
+	return (shellData->historyVal);
 }
 
 /**
  * hBuild - adds entry to a shellHistory linked list
- * @info: Structure containing potential arguments. Used to maintain
+ * @shellData: Structure containing potential arguments. Used to maintain
  * @buf: buffer
  * @linecount: the shellHistory linecount, historyVal
  *
  * Return: Always 0
  */
-int hBuild(dataX *info, char *buf, int linecount)
+int hBuild(dataX *shellData, char *buf, int linecount)
 {
 	list_t *node = NULL;
 
-	if (info->shellHistory)
-		node = info->shellHistory;
+	if (shellData->shellHistory)
+		node = shellData->shellHistory;
 	newNode(&node, buf, linecount);
 
-	if (!info->shellHistory)
-		info->shellHistory = node;
+	if (!shellData->shellHistory)
+		shellData->shellHistory = node;
 	return (0);
 }
 
 /**
  * hNum - renumbers the shellHistory linked list after changes
- * @info: Structure containing potential arguments. Used to maintain
+ * @shellData: Structure containing potential arguments. Used to maintain
  *
  * Return: the new historyVal
  */
-int hNum(dataX *info)
+int hNum(dataX *shellData)
 {
-	list_t *node = info->shellHistory;
+	list_t *node = shellData->shellHistory;
 	int i = 0;
 
 	while (node)
@@ -139,5 +139,5 @@ int hNum(dataX *info)
 		node->num = i++;
 		node = node->next;
 	}
-	return (info->historyVal = i);
+	return (shellData->historyVal = i);
 }

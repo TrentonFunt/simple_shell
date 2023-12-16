@@ -157,12 +157,6 @@ char *varPath(dataX *, char *, char *);
 /* Function prototype(s) for loophsh.c */
 int loophsh(char **);
 
-/* Function prototype(s) for errors.c */
-void putsIN(char *);
-int putcharIN(char);
-int _putFileDes(char c, int fd);
-int _putsFileDes(char *str, int fd);
-
 /* Function prototype(s) for string.c */
 int _strlen(char *);
 int _strcmp(char *, char *);
@@ -197,6 +191,12 @@ int iMode(dataX *);
 int checkDelim(char, char *);
 int checkAlpha(int);
 int convert(char *);
+
+/* Function prototype(s) for shellErrors1.c */
+void putsIN(char *);
+int putcharIN(char);
+int _putFileDes(char c, int fd);
+int _putsFileDes(char *str, int fd);
 
 /* Function prototype(s) for shellErrors2.c */
 int convertError(char *);

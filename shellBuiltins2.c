@@ -3,24 +3,24 @@
 /**
  * historyDone - displays the shellHistory list, one command by line, preceded
  *              with line numbers, starting at 0.
- * @info: Structure containing potential arguments. Used to maintain
+ * @shellData: Structure containing potential arguments. Used to maintain
  *        constant function prototype.
  *  Return: Always 0
  */
-int historyDone(dataX *info)
+int historyDone(dataX *shellData)
 {
-	listPrint(info->shellHistory);
+	listPrint(shellData->shellHistory);
 	return (0);
 }
 
 /**
  * unset_alias - sets alias to string
- * @info: parameter struct
+ * @shellData: parameter struct
  * @str: the string alias
  *
  * Return: Always 0 on success, 1 on error
  */
-int unset_alias(dataX *info, char *str)
+int unset_alias(dataX *shellData, char *str)
 {
 	char *p, c;
 	int ret;
@@ -30,20 +30,20 @@ int unset_alias(dataX *info, char *str)
 		return (1);
 	c = *p;
 	*p = 0;
-	ret = delNode(&(info->alias),
-		nodeIndex(info->alias, beginNode(info->alias, str, -1)));
+	ret = delNode(&(shellData->alias),
+		nodeIndex(shellData->alias, beginNode(shellData->alias, str, -1)));
 	*p = c;
 	return (ret);
 }
 
 /**
  * set_alias - sets alias to string
- * @info: parameter struct
+ * @shellData: parameter struct
  * @str: the string alias
  *
  * Return: Always 0 on success, 1 on error
  */
-int set_alias(dataX *info, char *str)
+int set_alias(dataX *shellData, char *str)
 {
 	char *p;
 
@@ -51,10 +51,10 @@ int set_alias(dataX *info, char *str)
 	if (!p)
 		return (1);
 	if (!*++p)
-		return (unset_alias(info, str));
+		return (unset_alias(shellData, str));
 
-	unset_alias(info, str);
-	return (newNode(&(info->alias), str, 0) == NULL);
+	unset_alias(shellData, str);
+	return (newNode(&(shellData->alias), str, 0) == NULL);
 }
 
 /**
@@ -82,19 +82,19 @@ int print_alias(list_t *node)
 
 /**
  * aliasDone - mimics the alias builtin (man alias)
- * @info: Structure containing potential arguments. Used to maintain
+ * @shellData: Structure containing potential arguments. Used to maintain
  *          constant function prototype.
  *  Return: Always 0
  */
-int aliasDone(dataX *info)
+int aliasDone(dataX *shellData)
 {
 	int i = 0;
 	char *p = NULL;
 	list_t *node = NULL;
 
-	if (info->cmdArgc == 1)
+	if (shellData->cmdArgc == 1)
 	{
-		node = info->alias;
+		node = shellData->alias;
 		while (node)
 		{
 			print_alias(node);
@@ -102,13 +102,13 @@ int aliasDone(dataX *info)
 		}
 		return (0);
 	}
-	for (i = 1; info->cmdArgv[i]; i++)
+	for (i = 1; shellData->cmdArgv[i]; i++)
 	{
-		p = _strchr(info->cmdArgv[i], '=');
+		p = _strchr(shellData->cmdArgv[i], '=');
 		if (p)
-			set_alias(info, info->cmdArgv[i]);
+			set_alias(shellData, shellData->cmdArgv[i]);
 		else
-			print_alias(beginNode(info->alias, info->cmdArgv[i], '='));
+			print_alias(beginNode(shellData->alias, shellData->cmdArgv[i], '='));
 	}
 
 	return (0);

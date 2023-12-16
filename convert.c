@@ -1,14 +1,14 @@
 #include "shell.h"
 
 /**
- * iMode - Will retun true if shell is iMode mode
- * @info: struct address
+ * iMode - returns true if shell is iMode mode
+ * @shellData: struct address
  *
  * Return: 1 if iMode mode, 0 otherwise
  */
-int iMode(dataX *info)
+int iMode(dataX *shellData)
 {
-	return (isatty(STDIN_FILENO) && info->getFileDes <= 2);
+	return (isatty(STDIN_FILENO) && shellData->getFileDes <= 2);
 }
 
 /**
@@ -20,8 +20,12 @@ int iMode(dataX *info)
 int checkDelim(char c, char *delim)
 {
 	while (*delim)
+	{
 		if (*delim++ == c)
+		{
 			return (1);
+		}
+	}
 	return (0);
 }
 
@@ -30,7 +34,6 @@ int checkDelim(char c, char *delim)
  *@c: The character to input
  *Return: 1 if c is alphabetic, 0 otherwise
  */
-
 int checkAlpha(int q)
 {
 	if ((q >= 'a' && q <= 'z') || (q >= 'A' && q <= 'Z'))

@@ -2,13 +2,13 @@
 
 /**
  * chainDelim - test if current char in buffer is a chain delimeter
- * @info: the parameter struct
+ * @shellData: the parameter struct
  * @buf: the char buffer
  * @p: address of current position in buf
  *
  * Return: 1 if chain delimeter, 0 otherwise
  */
-int chainDelim(dataX *info, char *buf, size_t *p)
+int chainDelim(dataX *shellData, char *buf, size_t *p)
 {
 	size_t j = *p;
 
@@ -16,18 +16,18 @@ int chainDelim(dataX *info, char *buf, size_t *p)
 	{
 		buf[j] = 0;
 		j++;
-		info->cmdBufferType = OR_COMMAND;
+		shellData->cmdBufferType = OR_COMMAND;
 	}
 	else if (buf[j] == '&' && buf[j + 1] == '&')
 	{
 		buf[j] = 0;
 		j++;
-		info->cmdBufferType = AND_COMMAND;
+		shellData->cmdBufferType = AND_COMMAND;
 	}
 	else if (buf[j] == ';') /* found end of this command */
 	{
 		buf[j] = 0; /* replace semicolon with null */
-		info->cmdBufferType = CHAINED_COMMAND;
+		shellData->cmdBufferType = CHAINED_COMMAND;
 	}
 	else
 		return (0);
@@ -37,7 +37,7 @@ int chainDelim(dataX *info, char *buf, size_t *p)
 
 /**
  * chainChecks - checks we should continue chaining based on last shellState
- * @info: the parameter struct
+ * @shellData: the parameter struct
  * @buf: the char buffer
  * @p: address of current position in buf
  * @i: starting position in buf
@@ -45,21 +45,21 @@ int chainDelim(dataX *info, char *buf, size_t *p)
  *
  * Return: Void
  */
-void chainChecks(dataX *info, char *buf, size_t *p, size_t i, size_t len)
+void chainChecks(dataX *shellData, char *buf, size_t *p, size_t i, size_t len)
 {
 	size_t j = *p;
 
-	if (info->cmdBufferType == AND_COMMAND)
+	if (shellData->cmdBufferType == AND_COMMAND)
 	{
-		if (info->shellState)
+		if (shellData->shellState)
 		{
 			buf[i] = 0;
 			j = len;
 		}
 	}
-	if (info->cmdBufferType == OR_COMMAND)
+	if (shellData->cmdBufferType == OR_COMMAND)
 	{
-		if (!info->shellState)
+		if (!shellData->shellState)
 		{
 			buf[i] = 0;
 			j = len;
@@ -71,11 +71,11 @@ void chainChecks(dataX *info, char *buf, size_t *p, size_t i, size_t len)
 
 /**
  * aliasChange - replaces an aliases in the tokenized string
- * @info: the parameter struct
+ * @shellData: the parameter struct
  *
  * Return: 1 if replaced, 0 otherwise
  */
-int aliasChange(dataX *info)
+int aliasChange(dataX *shellData)
 {
 	int i;
 	list_t *node;
@@ -83,57 +83,57 @@ int aliasChange(dataX *info)
 
 	for (i = 0; i < 10; i++)
 	{
-		node = beginNode(info->alias, info->cmdArgv[0], '=');
+		node = beginNode(shellData->alias, shellData->cmdArgv[0], '=');
 		if (!node)
 			return (0);
-		free(info->cmdArgv[0]);
+		free(shellData->cmdArgv[0]);
 		p = _strchr(node->str, '=');
 		if (!p)
 			return (0);
 		p = _strdup(p + 1);
 		if (!p)
 			return (0);
-		info->cmdArgv[0] = p;
+		shellData->cmdArgv[0] = p;
 	}
 	return (1);
 }
 
 /**
  * variableChange - replaces vars in the tokenized string
- * @info: the parameter struct
+ * @shellData: the parameter struct
  *
  * Return: 1 if replaced, 0 otherwise
  */
-int variableChange(dataX *info)
+int variableChange(dataX *shellData)
 {
 	int i = 0;
 	list_t *node;
 
-	for (i = 0; info->cmdArgv[i]; i++)
+	for (i = 0; shellData->cmdArgv[i]; i++)
 	{
-		if (info->cmdArgv[i][0] != '$' || !info->cmdArgv[i][1])
+		if (shellData->cmdArgv[i][0] != '$' || !shellData->cmdArgv[i][1])
 			continue;
 
-		if (!_strcmp(info->cmdArgv[i], "$?"))
+		if (!_strcmp(shellData->cmdArgv[i], "$?"))
 		{
-			stringChange(&(info->cmdArgv[i]),
-				_strdup(convert_number(info->shellState, 10, 0)));
+			stringChange(&(shellData->cmdArgv[i]),
+				_strdup(convert_number(shellData->shellState, 10, 0)));
 			continue;
 		}
-		if (!_strcmp(info->cmdArgv[i], "$$"))
+		if (!_strcmp(shellData->cmdArgv[i], "$$"))
 		{
-			stringChange(&(info->cmdArgv[i]),
+			stringChange(&(shellData->cmdArgv[i]),
 				_strdup(convert_number(getpid(), 10, 0)));
 			continue;
 		}
-		node = beginNode(info->env, &info->cmdArgv[i][1], '=');
+		node = beginNode(shellData->env, &shellData->cmdArgv[i][1], '=');
 		if (node)
 		{
-			stringChange(&(info->cmdArgv[i]),
+			stringChange(&(shellData->cmdArgv[i]),
 				_strdup(_strchr(node->str, '=') + 1));
 			continue;
 		}
-		stringChange(&info->cmdArgv[i], _strdup(""));
+		stringChange(&shellData->cmdArgv[i], _strdup(""));
 
 	}
 	return (0);

@@ -2,57 +2,57 @@
 
 /**
  * hsh - main shell loop
- * @info: the parameter & return info struct
+ * @shellData: the parameter & return shellData struct
  * @av: the argument vector from main()
  *
  * Return: 0 on success, 1 on error, or error code
  */
-int hsh(dataX *info, char **av)
+int hsh(dataX *shellData, char **av)
 {
 	ssize_t r = 0;
 	int builtin_ret = 0;
 
 	while (r != -1 && builtin_ret != -2)
 	{
-		clrData(info);
-		if (iMode(info))
+		clrData(shellData);
+		if (iMode(shellData))
 			_puts("$ ");
 		putcharIN(FLUSH_BUFFER);
-		r = takeInput(info);
+		r = takeInput(shellData);
 		if (r != -1)
 		{
-			defData(info, av);
-			builtin_ret = builtIn(info);
+			defData(shellData, av);
+			builtin_ret = builtIn(shellData);
 			if (builtin_ret == -1)
-				cmd_g(info);
+				cmd_g(shellData);
 		}
-		else if (iMode(info))
+		else if (iMode(shellData))
 			_putchar('\n');
-		freeData(info, 0);
+		freeData(shellData, 0);
 	}
-	historyWrite(info);
-	freeData(info, 1);
-	if (!iMode(info) && info->shellState)
-		exit(info->shellState);
+	historyWrite(shellData);
+	freeData(shellData, 1);
+	if (!iMode(shellData) && shellData->shellState)
+		exit(shellData->shellState);
 	if (builtin_ret == -2)
 	{
-		if (info->errValue == -1)
-			exit(info->shellState);
-		exit(info->errValue);
+		if (shellData->errValue == -1)
+			exit(shellData->shellState);
+		exit(shellData->errValue);
 	}
 	return (builtin_ret);
 }
 
 /**
  * builtIn - finds a builtin command
- * @info: the parameter & return info struct
+ * @shellData: the parameter & return shellData struct
  *
  * Return: -1 if builtin not found,
  *			0 if builtin executed successfully,
  *			1 if builtin found but not successful,
  *			-2 if builtin signals exit()
  */
-int builtIn(dataX *info)
+int builtIn(dataX *shellData)
 {
 	int i, built_in_ret = -1;
 	builtin_table builtintbl[] = {
@@ -68,10 +68,10 @@ int builtIn(dataX *info)
 	};
 
 	for (i = 0; builtintbl[i].type; i++)
-		if (_strcmp(info->cmdArgv[0], builtintbl[i].type) == 0)
+		if (_strcmp(shellData->cmdArgv[0], builtintbl[i].type) == 0)
 		{
-			info->cmdCounter++;
-			built_in_ret = builtintbl[i].func(info);
+			shellData->cmdCounter++;
+			built_in_ret = builtintbl[i].func(shellData);
 			break;
 		}
 	return (built_in_ret);
@@ -79,53 +79,53 @@ int builtIn(dataX *info)
 
 /**
  * cmd_g - finds a command in PATH
- * @info: the parameter & return info struct
+ * @shellData: the parameter & return shellData struct
  *
  * Return: void
  */
-void cmd_g(dataX *info)
+void cmd_g(dataX *shellData)
 {
 	char *filePath = NULL;
 	int i, k;
 
-	info->filePath = info->cmdArgv[0];
-	if (info->cmdCounterFlag == 1)
+	shellData->filePath = shellData->cmdArgv[0];
+	if (shellData->cmdCounterFlag == 1)
 	{
-		info->cmdCounter++;
-		info->cmdCounterFlag = 0;
+		shellData->cmdCounter++;
+		shellData->cmdCounterFlag = 0;
 	}
-	for (i = 0, k = 0; info->cmdArgs[i]; i++)
-		if (!checkDelim(info->cmdArgs[i], " \t\n"))
+	for (i = 0, k = 0; shellData->cmdArgs[i]; i++)
+		if (!checkDelim(shellData->cmdArgs[i], " \t\n"))
 			k++;
 	if (!k)
 		return;
 
-	filePath = varPath(info, defEnv(info, "PATH="), info->cmdArgv[0]);
+	filePath = varPath(shellData, defEnv(shellData, "PATH="), shellData->cmdArgv[0]);
 	if (filePath)
 	{
-		info->filePath = filePath;
-		cmd_f(info);
+		shellData->filePath = filePath;
+		cmd_f(shellData);
 	}
 	else
 	{
-		if ((iMode(info) || defEnv(info, "PATH=")
-			|| info->cmdArgv[0][0] == '/') && cmdRun(info, info->cmdArgv[0]))
-			cmd_f(info);
-		else if (*(info->cmdArgs) != '\n')
+		if ((iMode(shellData) || defEnv(shellData, "PATH=")
+			|| shellData->cmdArgv[0][0] == '/') && cmdRun(shellData, shellData->cmdArgv[0]))
+			cmd_f(shellData);
+		else if (*(shellData->cmdArgs) != '\n')
 		{
-			info->shellState = 127;
-			printError(info, "not found\n");
+			shellData->shellState = 127;
+			printError(shellData, "not found\n");
 		}
 	}
 }
 
 /**
  * cmd_f - forks a an exec thread to run cmd
- * @info: the parameter & return info struct
+ * @shellData: the parameter & return shellData struct
  *
  * Return: void
  */
-void cmd_f(dataX *info)
+void cmd_f(dataX *shellData)
 {
 	pid_t child_pid;
 
@@ -138,9 +138,9 @@ void cmd_f(dataX *info)
 	}
 	if (child_pid == 0)
 	{
-		if (execve(info->filePath, info->cmdArgv, envGet(info)) == -1)
+		if (execve(shellData->filePath, shellData->cmdArgv, envGet(shellData)) == -1)
 		{
-			freeData(info, 1);
+			freeData(shellData, 1);
 			if (errno == EACCES)
 				exit(126);
 			exit(1);
@@ -149,12 +149,12 @@ void cmd_f(dataX *info)
 	}
 	else
 	{
-		wait(&(info->shellState));
-		if (WIFEXITED(info->shellState))
+		wait(&(shellData->shellState));
+		if (WIFEXITED(shellData->shellState))
 		{
-			info->shellState = WEXITSTATUS(info->shellState);
-			if (info->shellState == 126)
-				printError(info, "Permission denied\n");
+			shellData->shellState = WEXITSTATUS(shellData->shellState);
+			if (shellData->shellState == 126)
+				printError(shellData, "Permission denied\n");
 		}
 	}
 }

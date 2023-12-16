@@ -2,16 +2,16 @@
 
 /**
  * cmdRun - determines if a file is an executable command
- * @info: the info struct
+ * @shellData: the shellData struct
  * @filePath: filePath to the file
  *
  * Return: 1 if true, 0 otherwise
  */
-int cmdRun(dataX *info, char *filePath)
+int cmdRun(dataX *shellData, char *filePath)
 {
 	struct stat st;
 
-	(void)info;
+	(void)shellData;
 	if (!filePath || stat(filePath, &st))
 		return (0);
 
@@ -44,13 +44,13 @@ char *genChar(char *pathstr, int start, int stop)
 
 /**
  * varPath - finds this cmd in the PATH string
- * @info: the info struct
+ * @shellData: the shellData struct
  * @pathstr: the PATH string
  * @cmd: the cmd to find
  *
  * Return: full filePath of cmd if found or NULL
  */
-char *varPath(dataX *info, char *pathstr, char *cmd)
+char *varPath(dataX *shellData, char *pathstr, char *cmd)
 {
 	int i = 0, curr_pos = 0;
 	char *filePath;
@@ -59,7 +59,7 @@ char *varPath(dataX *info, char *pathstr, char *cmd)
 		return (NULL);
 	if ((_strlen(cmd) > 2) && beginT(cmd, "./"))
 	{
-		if (cmdRun(info, cmd))
+		if (cmdRun(shellData, cmd))
 			return (cmd);
 	}
 	while (1)
@@ -74,7 +74,7 @@ char *varPath(dataX *info, char *pathstr, char *cmd)
 				_strcat(filePath, "/");
 				_strcat(filePath, cmd);
 			}
-			if (cmdRun(info, filePath))
+			if (cmdRun(shellData, filePath))
 				return (filePath);
 			if (!pathstr[i])
 				break;

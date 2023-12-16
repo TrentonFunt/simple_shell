@@ -2,40 +2,40 @@
 
 /**
  * exitDone - exits the shell
- * @info: Structure containing potential arguments. Used to maintain
+ * @shellData: Structure containing potential arguments. Used to maintain
  *          constant function prototype.
  *  Return: exits with a given exit shellState
- *         (0) if info.cmdArgv[0] != "exit"
+ *         (0) if shellData.cmdArgv[0] != "exit"
  */
-int exitDone(dataX *info)
+int exitDone(dataX *shellData)
 {
 	int exitcheck;
 
-	if (info->cmdArgv[1])  /* If there is an exit arguement */
+	if (shellData->cmdArgv[1])  /* If there is an exit arguement */
 	{
-		exitcheck = convertError(info->cmdArgv[1]);
+		exitcheck = convertError(shellData->cmdArgv[1]);
 		if (exitcheck == -1)
 		{
-			info->shellState = 2;
-			printError(info, "Illegal number: ");
-			putsIN(info->cmdArgv[1]);
+			shellData->shellState = 2;
+			printError(shellData, "Illegal number: ");
+			putsIN(shellData->cmdArgv[1]);
 			putcharIN('\n');
 			return (1);
 		}
-		info->errValue = convertError(info->cmdArgv[1]);
+		shellData->errValue = convertError(shellData->cmdArgv[1]);
 		return (-2);
 	}
-	info->errValue = -1;
+	shellData->errValue = -1;
 	return (-2);
 }
 
 /**
  * cdDone - changes the current directory of the process
- * @info: Structure containing potential arguments. Used to maintain
+ * @shellData: Structure containing potential arguments. Used to maintain
  *          constant function prototype.
  *  Return: Always 0
  */
-int cdDone(dataX *info)
+int cdDone(dataX *shellData)
 {
 	char *s, *dir, buffer[1024];
 	int chdir_ret;
@@ -43,53 +43,53 @@ int cdDone(dataX *info)
 	s = getcwd(buffer, 1024);
 	if (!s)
 		_puts("TODO: >>getcwd failure emsg here<<\n");
-	if (!info->cmdArgv[1])
+	if (!shellData->cmdArgv[1])
 	{
-		dir = defEnv(info, "HOME=");
+		dir = defEnv(shellData, "HOME=");
 		if (!dir)
 			chdir_ret = /* TODO: what should this be? */
-				chdir((dir = defEnv(info, "PWD=")) ? dir : "/");
+				chdir((dir = defEnv(shellData, "PWD=")) ? dir : "/");
 		else
 			chdir_ret = chdir(dir);
 	}
-	else if (_strcmp(info->cmdArgv[1], "-") == 0)
+	else if (_strcmp(shellData->cmdArgv[1], "-") == 0)
 	{
-		if (!defEnv(info, "OLDPWD="))
+		if (!defEnv(shellData, "OLDPWD="))
 		{
 			_puts(s);
 			_putchar('\n');
 			return (1);
 		}
-		_puts(defEnv(info, "OLDPWD=")), _putchar('\n');
+		_puts(defEnv(shellData, "OLDPWD=")), _putchar('\n');
 		chdir_ret = /* TODO: what should this be? */
-			chdir((dir = defEnv(info, "OLDPWD=")) ? dir : "/");
+			chdir((dir = defEnv(shellData, "OLDPWD=")) ? dir : "/");
 	}
 	else
-		chdir_ret = chdir(info->cmdArgv[1]);
+		chdir_ret = chdir(shellData->cmdArgv[1]);
 	if (chdir_ret == -1)
 	{
-		printError(info, "can't cd to ");
-		putsIN(info->cmdArgv[1]), putcharIN('\n');
+		printError(shellData, "can't cd to ");
+		putsIN(shellData->cmdArgv[1]), putcharIN('\n');
 	}
 	else
 	{
-		envSet(info, "OLDPWD", defEnv(info, "PWD="));
-		envSet(info, "PWD", getcwd(buffer, 1024));
+		envSet(shellData, "OLDPWD", defEnv(shellData, "PWD="));
+		envSet(shellData, "PWD", getcwd(buffer, 1024));
 	}
 	return (0);
 }
 
 /**
  * helpDone - changes the current directory of the process
- * @info: Structure containing potential arguments. Used to maintain
+ * @shellData: Structure containing potential arguments. Used to maintain
  *          constant function prototype.
  *  Return: Always 0
  */
-int helpDone(dataX *info)
+int helpDone(dataX *shellData)
 {
 	char **arg_array;
 
-	arg_array = info->cmdArgv;
+	arg_array = shellData->cmdArgv;
 	_puts("Not Implemented \n");
 	if (0)
 		_puts(*arg_array); /* temp att_unused workaround */

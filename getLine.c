@@ -2,26 +2,27 @@
 
 /**
  * input_buf - buffers chained commands
- * @info: parameter struct
+ * @shellData: parameter struct
  * @buf: address of buffer
  * @len: address of len var
  *
  * Return: bytes read
  */
-ssize_t input_buf(dataX *info, char **buf, size_t *len)
+ssize_t input_buf(dataX *shellData, char **buf, size_t *len)
 {
 	ssize_t r = 0;
 	size_t len_p = 0;
 
 	if (!*len) /*  fill buffer if empty */
 	{
+		/*getFree((void **)shellData->cmdBuffer);*/
 		free(*buf);
 		*buf = NULL;
 		signal(SIGINT, intHandle);
 #if INIT_SYSTEM_GETLINE
 		r = getline(buf, &len_p, stdin);
 #else
-		r = _getLine(info, buf, &len_p);
+		r = _getLine(shellData, buf, &len_p);
 #endif
 		if (r > 0)
 		{
@@ -30,12 +31,13 @@ ssize_t input_buf(dataX *info, char **buf, size_t *len)
 				(*buf)[r - 1] = '\0'; /*  trailing newline removed */
 				r--;
 			}
-			info->cmdCounterFlag = 1;
+			shellData->cmdCounterFlag = 1;
 			remove_comments(*buf);
-			hBuild(info, *buf, info->historyVal++);
+			hBuild(shellData, *buf, shellData->historyVal++);
+			/* if (_strchr(*buf, ';')) is this a command chain? */
 			{
 				*len = r;
-				info->cmdBuffer = buf;
+				shellData->cmdBuffer = buf;
 			}
 		}
 	}
@@ -44,30 +46,30 @@ ssize_t input_buf(dataX *info, char **buf, size_t *len)
 
 /**
  * takeInput - gets a line minus the newline
- * @info: parameter struct
+ * @shellData: parameter struct
  *
  * Return: bytes read
  */
-ssize_t takeInput(dataX *info)
+ssize_t takeInput(dataX *shellData)
 {
 	static char *buf; /* the ';' command chain buffer */
 	static size_t i, j, len;
 	ssize_t r = 0;
-	char **buf_p = &(info->cmdArgs), *p;
+	char **buf_p = &(shellData->cmdArgs), *p;
 
 	_putchar(FLUSH_BUFFER);
-	r = input_buf(info, &buf, &len);
-	if (r == -1) /* End Of File Condition */
+	r = input_buf(shellData, &buf, &len);
+	if (r == -1) /* EOF */
 		return (-1);
 	if (len)
 	{
 		j = i; /* init new iterator to current buf position */
 		p = buf + i; /* get pointer for return */
 
-		chainChecks(info, buf, &j, i, len);
-		while (j < len)
+		chainChecks(shellData, buf, &j, i, len);
+		while (j < len) /* iterate to semicolon or end */
 		{
-			if (chainDelim(info, buf, &j))
+			if (chainDelim(shellData, buf, &j))
 				break;
 			j++;
 		}
@@ -76,7 +78,7 @@ ssize_t takeInput(dataX *info)
 		if (i >= len) /* reached end of buffer? */
 		{
 			i = len = 0; /* reset position and length */
-			info->cmdBufferType = NORMAL_COMMAND;
+			shellData->cmdBufferType = NORMAL_COMMAND;
 		}
 
 		*buf_p = p;
@@ -89,33 +91,33 @@ ssize_t takeInput(dataX *info)
 
 /**
  * read_buf - reads a buffer
- * @info: parameter struct
+ * @shellData: parameter struct
  * @buf: buffer
  * @i: size
  *
  * Return: r
  */
-ssize_t read_buf(dataX *info, char *buf, size_t *i)
+ssize_t read_buf(dataX *shellData, char *buf, size_t *i)
 {
-	ssize_t q = 0;
+	ssize_t r = 0;
 
 	if (*i)
 		return (0);
-	q = read(info->getFileDes, buf, INPUT_BUFFER_SIZE);
-	if (q >= 0)
-		*i = q;
-	return (q);
+	r = read(shellData->getFileDes, buf, INPUT_BUFFER_SIZE);
+	if (r >= 0)
+		*i = r;
+	return (r);
 }
 
 /**
  * _getLine - gets the next line of input from STDIN
- * @info: parameter structure
+ * @shellData: parameter struct
  * @ptr: address of pointer to buffer, preallocated or NULL
  * @length: size of preallocated ptr buffer if not NULL
  *
  * Return: The number of characters read, or -1 on failure.
  */
-int _getLine(dataX *info, char **ptr, size_t *length)
+int _getLine(dataX *shellData, char **ptr, size_t *length)
 {
 	/* Static buffer for reading input */
 	static char buf[INPUT_BUFFER_SIZE];
@@ -131,11 +133,10 @@ int _getLine(dataX *info, char **ptr, size_t *length)
 	/* Reset indices if the current buffer is fully consumed */
 	if (i == len) {
 		i = len = 0;
-		/* Read from input into the buffer */
-		r = read_buf(info, buf, &len);
-		if (r == -1 || (r == 0 && len == 0))
-			return (-1);
 	}
+	r = read_buf(shellData, buf, &len);
+	if (r == -1 || (r == 0 && len == 0))
+		return (-1);
 
 	/* Find the position of the newline character in the buffer */
 	c = _strchr(buf + i, '\n');
@@ -170,7 +171,6 @@ int _getLine(dataX *info, char **ptr, size_t *length)
 /**
  * intHandle - blocks ctrl-C
  * @sig_num: the signal number
- *
  * Return: void
  */
 void intHandle(__attribute__((unused))int sig_num)

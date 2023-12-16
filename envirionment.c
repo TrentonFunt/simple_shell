@@ -2,26 +2,26 @@
 
 /**
  * envDone - prints the current environment
- * @info: Structure with potential arguments. Used to maintain
+ * @shellData: Structure containing potential arguments. Used to maintain
  *          constant function prototype.
  * Return: Always 0
  */
-int envDone(dataX *info)
+int envDone(dataX *shellData)
 {
-	strPrint(info->env);
+	strPrint(shellData->env);
 	return (0);
 }
 
 /**
  * defEnv - gets the value of an environ variable
- * @info: Structure containing potential arguments. Used to maintain
- * @name: env variable name
+ * @shellData: Structure containing potential arguments. Used to maintain
+ * @name: env var name
  *
  * Return: value
  */
-char *defEnv(dataX *info, const char *name)
+char *defEnv(dataX *shellData, const char *name)
 {
-	list_t *node = info->env;
+	list_t *node = shellData->env;
 	char *p;
 
 	while (node)
@@ -37,56 +37,56 @@ char *defEnv(dataX *info, const char *name)
 /**
  * setEnvDone - Initialize a new environment variable,
  *             or modify an existing one
- * @info: Structure containing potential arguments. Used to maintain
+ * @shellData: Structure containing potential arguments. Used to maintain
  *        constant function prototype.
  *  Return: Always 0
  */
-int setEnvDone(dataX *info)
+int setEnvDone(dataX *shellData)
 {
-	if (info->cmdArgc != 3)
+	if (shellData->cmdArgc != 3)
 	{
 		putsIN("Number of arguments incorrect\n");
 		return (1);
 	}
-	if (envSet(info, info->cmdArgv[1], info->cmdArgv[2]))
+	if (envSet(shellData, shellData->cmdArgv[1], shellData->cmdArgv[2]))
 		return (0);
 	return (1);
 }
 
 /**
  * unsetEnvDone - Remove an environment variable
- * @info: Structure containing potential arguments. Used to maintain
+ * @shellData: Structure containing potential arguments. Used to maintain
  *        constant function prototype.
  *  Return: Always 0
  */
-int unsetEnvDone(dataX *info)
+int unsetEnvDone(dataX *shellData)
 {
 	int i;
 
-	if (info->cmdArgc == 1)
+	if (shellData->cmdArgc == 1)
 	{
 		putsIN("Arguments not enough.\n");
 		return (1);
 	}
-	for (i = 1; i <= info->cmdArgc; i++)
-		envUnset(info, info->cmdArgv[i]);
+	for (i = 1; i <= shellData->cmdArgc; i++)
+		envUnset(shellData, shellData->cmdArgv[i]);
 
 	return (0);
 }
 
 /**
  * fillEnvList - populates env linked list
- * @info: Structure containing potential arguments. Used to maintain
+ * @shellData: Structure containing potential arguments. Used to maintain
  *          constant function prototype.
  * Return: Always 0
  */
-int fillEnvList(dataX *info)
+int fillEnvList(dataX *shellData)
 {
 	list_t *node = NULL;
 	size_t i;
 
 	for (i = 0; environ[i]; i++)
 		newNode(&node, environ[i], 0);
-	info->env = node;
+	shellData->env = node;
 	return (0);
 }
